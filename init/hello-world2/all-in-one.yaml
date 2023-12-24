@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment
+  name: nginx-2-deployment
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: nginx
+      app: nginx-2
   template:
     metadata:
       labels:
-        app: nginx
+        app: nginx-2
     spec:
       containers:
-      - name: nginx
-        image: nginx:latest  # Using the latest official nginx image
+      - name: nginx-2
+        image: nginx:latest  # Using the latest official nginx-2 image
         ports:
         - containerPort: 80
         resources: {}
@@ -22,21 +22,21 @@ spec:
         - name: MESSAGE
           valueFrom:
             configMapKeyRef:
-              name: nginx-config
+              name: nginx-2-config
               key: message
         - name: SECRET_KEY
           valueFrom:
             secretKeyRef:
-              name: nginx-secret
+              name: nginx-2-secret
               key: secretkey
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: nginx-service
+  name: nginx-2-service
 spec:
   selector:
-    app: nginx
+    app: nginx-2
   ports:
     - protocol: TCP
       port: 80
@@ -46,7 +46,7 @@ spec:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: nginx-secret
+  name: nginx-2-secret
 type: Opaque
 data:
   # Note: Values must be base64 encoded
@@ -55,7 +55,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: nginx-config
+  name: nginx-2-config
 data:
-  message: "Hello, World from NGINX ConfigMap!"
+  message: "Hello, World from nginx-2 ConfigMap!"
 
