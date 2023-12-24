@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-4-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-4
+  template:
+    metadata:
+      labels:
+        app: nginx-4
+    spec:
+      containers:
+      - name: nginx-4
+        image: nginx:latest  # Using the latest official nginx-4 image
+        ports:
+        - containerPort: 80
+        resources: {}
+        env:
+        - name: MESSAGE
+          valueFrom:
+            configMapKeyRef:
+              name: nginx-4-config
+              key: message
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: nginx-4-secret
+              key: secretkey
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-4-service
+spec:
+  selector:
+    app: nginx-4
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP # Change to NodePort or ClusterIP as needed
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nginx-4-secret
+type: Opaque
+data:
+  # Note: Values must be base64 encoded
+  secretkey: c2VjcmV0VmFsdWU= # "secretValue" base64 encoded
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-4-config
+data:
+  message: "Hello, World from nginx-4 ConfigMap!"
+
